@@ -1,0 +1,3 @@
+vcenter_hostname: 'vcenter01.example.com'
+vcenter_username: 'devopsuser@vsphere.local'
+vcenter_password: 'Dev0psUser!23'

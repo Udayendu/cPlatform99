@@ -1,0 +1,71 @@
+---
+- name: VMware guest Management using OVA
+  hosts: localhost
+  connection: 'local'
+  gather_facts: 'false'
+  vars_files:
+    - vsphere_creds.yml
+    - vsphere_var.yaml
+  tasks:
+    - name: Create a folder
+      vcenter_folder:
+        hostname: '{{ vcenter_hostname }}'
+        username: '{{ vcenter_username }}'
+        password: '{{ vcenter_password }}'
+        validate_certs: 'no'
+        datacenter: '{{ vsphere_datacenter }}'
+        folder_name: '{{ vsphere_folder }}'
+        folder_type: vm
+        state: present
+      delegate_to: localhost
+      register: vm_folder_creation_result
+
+    - name: Create a Resource Pool
+      vmware_resource_pool:
+        hostname: '{{ vsphere_hostname }}'
+        username: '{{ vsphere_usernmae }}'
+        password: '{{ vsphere_password }}'
+        validate_certs: no
+        datacenter: '{{ vsphere_datacenter }}'
+        cluster: '{{ vsphere_cluster }}'
+        resource_pool: '{{ vsphere_resourcepool }}'
+        mem_shares: normal
+        mem_limit: -1
+        mem_reservation: 0
+        mem_expandable_reservations: yes
+        cpu_shares: normal
+        cpu_limit: -1
+        cpu_reservation: 0
+        cpu_expandable_reservations: yes
+        state: present
+      delegate_to: localhost
+      register: vm_rp_creation_result
+
+    - name: VM creation from OVA
+      vmware_deploy_ovf:
+        hostname: '{{ vcenter_hostname }}'
+        username: '{{ vcenter_username }}'
+        password: '{{ vcenter_password }}'
+        datacenter: '{{ vsphere_datacenter }}'
+        cluster: '{{ vsphere_cluster }}'
+        datastore: '{{ vsphere_datastore }}'
+        folder: '/{{ vsphere_datacenter }}/vm/{{ vsphere_folder }}'
+        resource_pool: '{{ vsphere_resourcepool }}'
+        name: '{{ vsphere_vm_name }}'
+        disk_provisioning: 'thin'
+        networks:
+          "VM Network" : "{{ vsphere_vm_network }}"
+        validate_certs: 'no'
+        power_on: 'yes'
+        fail_on_spec_warnings: 'yes'
+        wait_for_ip_address: 'yes'
+        ovf: '/root/Demo-OVA/ansible-demo-1.0.15.ova'
+        properties:
+                ip0: '{{ vm_ip0 }}'
+                netmask0: '{{ vm_netmask0 }}'
+                gateway: '{{ vm_gateway }}'
+                hostname: '{{ vm_hostname }}'
+                ntpservers: '{{ vm_ntpservers }}'
+                dns: '{{ vm_dns }}'
+                searchlist: '{{ vm_searchlist }}'
+      delegate_to: localhost

@@ -1,0 +1,17 @@
+## vCenter resources Information
+vsphere_datacenter: 'Demo-Datacenter'
+vsphere_folder: 'Ansible-Demo-uskar'
+vsphere_resourcepool: 'Ansible-Demo-RP'
+vsphere_cluster: 'T1-HighCluster'
+vsphere_datastore: 'DS-HP-01'
+vsphere_vm_name: '10.121-OVA-demo-uskar'
+vsphere_vm_network: '192.168.10.xxx-vmnetwork'
+
+## Guest information as per the OVA variable
+vm_ip0: '192.168.10.121'
+vm_netmask0: '255.255.255.0'
+vm_gateway: '192.168.10.1'
+vm_hostname: 'ansibleova'
+vm_ntpservers: '192.168.122.1'
+vm_dns: '192.168.122.1'
+vm_searchlist: 'example.com'
