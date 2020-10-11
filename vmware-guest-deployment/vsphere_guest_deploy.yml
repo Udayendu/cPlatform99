@@ -1,5 +1,5 @@
 ---
-- name: VMware guest Management using OVA
+- name: VMware guest Management using Ansible
   hosts: localhost
   connection: 'local'
   gather_facts: 'false'
