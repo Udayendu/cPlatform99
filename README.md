@@ -1,2 +1,2 @@
 # cPlatform99
-A Code repo for my blog https://cplatform99.blogspot.com/
+A Code repo of my blog https://cplatform99.blogspot.com/
