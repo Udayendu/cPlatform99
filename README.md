@@ -1,6 +1,16 @@
 # cPlatform99
 A Code repo of my blog https://cplatform99.blogspot.com/
 
-- For blog "How to build Ubuntu Server 20.04 LTS OVA with vAPP Properties ?", the code is available under "deploy-ova-with-vAPP-properties" folder.
-- For blog "VMware OVA deployment using ansible", the code is available under "vmware-ova-deployment" folder.
+Blog link and their respective code folder:
 
+  [a]
+    - Blog Link: https://cplatform99.blogspot.com/2020/10/how-to-build-ubuntu-server-2004-lts-ova.html
+    - Code Folder: "deploy-ova-with-vAPP-properties"
+
+  [b] 
+    - Blog Link: https://cplatform99.blogspot.com/2019/09/vmware-ova-deployment-using-ansible.html
+    - Code Folder: "vmware-ova-deployment" 
+
+  [c]
+    - Blog Link: https://cplatform99.blogspot.com/2017/05/lvm-configuration-using-ansible-in.html
+    - Code Folder: "lvm-ansible"

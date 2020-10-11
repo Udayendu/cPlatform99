@@ -1,0 +1,80 @@
+---
+ - hosts: dbhosts
+   user: root
+   tasks:
+        - name: dbvg volume group creation
+          lvg:
+               vg: dbvg
+               pvs: /dev/sdb
+
+        - name: db00 lvm creation
+          lvol:
+               vg: dbvg
+               lv: db00
+               size: 2G
+
+        - name: db01 lvm creation
+          lvol:
+               vg: dbvg
+               lv: db01
+               size: 2G
+
+        - name: db02 lvm creation
+          lvol:
+               vg: dbvg
+               lv: db02
+               size: 2G
+
+        - name: db03 lvm creation
+          lvol:
+               vg: dbvg
+               lv: db03
+               size: 2G
+
+        - name: create file system for db00
+          filesystem:
+                fstype: ext4
+                dev: /dev/dbvg/db00
+
+        - name: create file system for db01
+          filesystem:
+                fstype: ext4
+                dev: /dev/dbvg/db01
+
+        - name: create file system for db02
+          filesystem:
+                fstype: ext4
+                dev: /dev/dbvg/db02
+
+        - name: create file system for db03
+          filesystem:
+                fstype: ext4
+                dev: /dev/dbvg/db03
+
+        - name: mount db00 logical volumes
+          mount:
+                name: /db00
+                src: /dev/dbvg/db00
+                fstype: ext4
+                state: mounted
+
+        - name: mount db01 logical volumes
+          mount:
+                name: /db01
+                src: /dev/dbvg/db01
+                fstype: ext4
+                state: mounted
+
+        - name: mount db02 logical volumes
+          mount:
+                name: /db02
+                src: /dev/dbvg/db02
+                fstype: ext4
+                state: mounted
+
+        - name: mount db03 logical volumes
+          mount:
+                name: /db03
+                src: /dev/dbvg/db03
+                fstype: ext4
+                state: mounted
