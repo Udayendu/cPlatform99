@@ -1,0 +1,71 @@
+---
+- name: VMware guest Management using OVA
+  hosts: localhost
+  connection: 'local'
+  gather_facts: 'false'
+  vars_files:
+    - vsphere_creds.yml
+    - vsphere_var.yaml
+  tasks:
+    - name: Make the folder
+      vcenter_folder:
+        hostname: '{{ vcenter_hostname }}'
+        username: '{{ vcenter_username }}'
+        password: '{{ vcenter_password }}'
+        validate_certs: 'no'
+        datacenter: '{{ vsphere_datacenter }}'
+        folder_name: '{{ vsphere_folder }}'
+        folder_type: vm
+        state: present
+      delegate_to: localhost
+      register: vm_folder_creation_result
+
+    - name: Create a Resource Pool
+      vmware_resource_pool:
+        hostname: '{{ vsphere_hostname }}'
+        username: '{{ vsphere_usernmae }}'
+        password: '{{ vsphere_password }}'
+        validate_certs: no
+        datacenter: '{{ vsphere_datacenter }}'
+        cluster: '{{ vsphere_cluster }}'
+        resource_pool: '{{ vsphere_resourcepool }}'
+        mem_shares: normal
+        mem_limit: -1
+        mem_reservation: 0
+        mem_expandable_reservations: yes
+        cpu_shares: normal
+        cpu_limit: -1
+        cpu_reservation: 0
+        cpu_expandable_reservations: yes
+        state: present
+      delegate_to: localhost
+      register: vm_rp_creation_result
+
+    - name: VM Deployment
+      vmware_guest:
+        hostname: '{{ vcenter_hostname }}'
+        username: '{{ vcenter_username }}'
+        password: '{{ vcenter_password }}'
+        validate_certs: no
+        datacenter: '{{ vsphere_datacenter }}'
+        cluster: '{{ vsphere_cluster }}'
+        resource_pool: '{{ vsphere_resourcepool }}'
+        folder: '{{ vsphere_folder }}'
+        name: '{{ inventory_hostname }}'
+        state: poweredon
+        networks:
+        - name: '{{ guest_network }}'
+          ip: '{{ guest_custom_ip }}'
+          netmask: '{{ guest_netmask }}'
+          gateway: '{{ guest_gateway }}'
+          dns_servers:
+          - '{{ guest_dns_server }}'
+        customization:
+          dns_servers:
+          - '{{ guest_dns_server }}'
+          domain : '{{ guest_domain_name }}'
+          hostname: '{{ guest_fqdn }}'
+        template: '{{ guest_template }}'
+        wait_for_ip_address: yes
+      delegate_to: localhost
+      register: deploy_vm

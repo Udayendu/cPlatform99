@@ -1,0 +1,17 @@
+## vCenter resources Information
+vsphere_datacenter: 'Demo-Datacenter'
+vsphere_folder: 'Ansible-Demo-uskar'
+vsphere_resourcepool: 'Ansible-Demo-RP'
+vsphere_cluster: 'T1-HighCluster'
+vsphere_datastore: 'DS-HP-01'
+inventory_hostname: '10.121-centos7-demo-uskar'
+
+## Guest Information 
+guest_network: '192.168.10.xxx-vmnetwork'
+guest_custom_ip: '192.168.10.121'
+guest_netmask: '255.255.255.0'
+guest_gateway: '192.168.10.1'
+guest_dns_server: '8.8.8.8'
+guest_fqdn: 'ansibledemo'
+guest_domain_name: 'example.com'
+guest_template: 'demo-centos7-template'
