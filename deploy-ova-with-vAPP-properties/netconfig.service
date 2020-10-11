@@ -1,0 +1,8 @@
+[Unit]
+Description=Configure Network with vAPP properties
+ 
+[Service]
+ExecStart=/usr/local/bin/netconfig.sh
+ 
+[Install]
+WantedBy=multi-user.target
