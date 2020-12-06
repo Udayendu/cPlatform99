@@ -1,0 +1,62 @@
+# vCenter Login Information
+vcenter_hostname: '<Enter_your_vCenter_FQDN>'
+vcenter_username: '<uname>@vsphere.local'
+vcenter_password: '********'
+
+# Variable entries for windows virtual machine
+vsphere_datacenter: ''
+vsphere_folder: ''
+vsphere_cluster: ''
+vsphere_datastore: ''
+
+# VM Network Components
+Mgmt_network: ''
+Mgmt_network_nmv4: '255.255.255.0'
+Mgmt_network_gwv4: ''
+Mgmt_network_ipv4: '' 
+vsphere_vm_hostname: ''
+
+# Tempalate of Windows 2016 Oct template by Your IT
+win_temp: 'W2k16-Oct-2020-cloud'
+
+# Default Guest Credentials by Your IT
+guest_username: 'administrator'
+guest_userpassword: 'GitHub1!'
+
+# Change CPU and Memory
+memory: 8192
+cpu: 2
+
+# Disk Size in GiB as needed
+c_drive_size: 75
+d_drive_size: 500
+p_drive_size: 20
+
+### Variable file for Windows 2016 Guest OS ###
+
+# Timezone and NTP Server
+# For timezone codes: https://docs.microsoft.com/en-us/previous-versions/windows/embedded/ms912391(v=winembedded.11)?redirectedfrom=MSDN
+timezone: ''
+ntp_server1: ''
+ntp_server2: ''
+
+# drive resizing details
+partition_size: '-1'
+disk_number1: '1'
+disk_number2: '2'
+
+# DNS server details
+dns_server1: ''
+dns_server2: ''
+
+# Pagefile Size based on the P drive size (Default 20GiB) 
+# and converting whole partition to the page drive
+initial_size: 20480
+maximum_size: 20480
+
+# AD details
+ad_domain: 'example.com'
+ad_domain_server: ''
+ad_domain_admin: 'example\admin'
+ad_domain_password: ''
+orgname: 'SELocalAdmin'

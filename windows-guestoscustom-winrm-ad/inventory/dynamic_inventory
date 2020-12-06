@@ -1,0 +1,14 @@
+[win-backup]
+<vmname_xxx.xxx.xxx.xxx>
+
+[guestos-win-backup]
+xxx.xxx.xxx.xxx
+
+[guestos-win-backup:vars]
+ansible_connection=winrm
+ansible_user=example\admin
+ansible_password=
+ansible_winrm_transport=credssp
+ansible_winrm_server_cert_validation=ignore
+ansible_port=5986
+

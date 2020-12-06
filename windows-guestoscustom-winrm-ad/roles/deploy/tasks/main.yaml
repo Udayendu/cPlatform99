@@ -1,0 +1,149 @@
+---
+- name: Creating vm folder
+  vcenter_folder:
+    hostname: '{{ vcenter_hostname }}'
+    username: '{{ vcenter_username }}'
+    password: '{{ vcenter_password }}'
+    validate_certs: 'no'
+    datacenter: '{{ vsphere_datacenter }}'
+    folder_name: '{{ vsphere_folder }}'
+    folder_type: vm
+    state: present
+  delegate_to: localhost
+
+- name: Deploying vm from '{{ win_temp }}'
+  vmware_guest:
+    hostname: '{{ vcenter_hostname }}'
+    username: '{{ vcenter_username }}'
+    password: '{{ vcenter_password }}'
+    datacenter: '{{ vsphere_datacenter }}'
+    cluster: '{{ vsphere_cluster }}'
+    datastore: '{{ vsphere_datastore }}'
+    name: '{{ inventory_hostname }}'
+    template: '{{ win_temp }}'
+    folder: '/{{ vsphere_datacenter }}/vm/{{ vsphere_folder }}'
+    validate_certs: 'no'
+    networks:
+    - name: '{{ Mgmt_network }}'
+      ip: "{{ Mgmt_network_ipv4 }}"
+      netmask: '{{ Mgmt_network_nmv4 }}'
+      gateway: '{{ Mgmt_network_gwv4 }}'
+      dns_servers:
+        - '{{ dns_server1 }}'
+        - '{{ dns_server2 }}'
+    state: poweredon
+    wait_for_ip_address: yes
+    customization:
+      hostname: "{{ vsphere_vm_hostname }}"
+      dns_suffix: '{{ ad_domain }}'
+      domainadmin: '{{ ad_domain_admin }}'
+      domainadminpassword: '{{ ad_domain_password }}'
+      joindomain: '{{ ad_domain }}'
+      timezone: '{{ timezone }}'
+    wait_for_customization: yes
+  delegate_to: localhost
+
+- name: sleep for 180 seconds and continue with play
+  wait_for:
+    timeout: 180
+  delegate_to: localhost
+
+- name: Shutdown the vm
+  vmware_guest_powerstate:
+    hostname: '{{ vcenter_hostname }}'
+    username: '{{ vcenter_username }}'
+    password: '{{ vcenter_password }}'
+    validate_certs: 'no'
+    name: '{{ inventory_hostname }}'
+    folder: '/{{ vsphere_datacenter }}/vm/{{ vsphere_folder }}'
+    state: powered-off
+  delegate_to: localhost
+  register: powerstate
+
+- name: CPU & Memory Change
+  vmware_guest:
+    hostname: '{{ vcenter_hostname }}'
+    username: '{{ vcenter_username }}'
+    password: '{{ vcenter_password }}'
+    datacenter: '{{ vsphere_datacenter }}'
+    cluster: '{{ vsphere_cluster }}'
+    validate_certs: 'no'
+    name: '{{ inventory_hostname }}'
+    state: present
+    hardware:
+      memory_mb: "{{ memory }}"
+      num_cpus: "{{ cpu }}"
+
+- name: Update C drive & Create D, P drives 
+  vmware_guest_disk:
+    hostname: '{{ vcenter_hostname }}'
+    username: '{{ vcenter_username }}'
+    password: '{{ vcenter_password }}'
+    datacenter: '{{ vsphere_datacenter }}'
+    validate_certs: 'no'
+    name: '{{ inventory_hostname }}'
+    disk:
+    - size_gb: "{{ c_drive_size }}"
+      type: thin
+      state: present
+      datastore: '{{ vsphere_datastore }}'
+      scsi_controller: 0
+      scsi_type: 'lsilogicsas'
+      unit_number: 0
+    - size_gb: "{{ d_drive_size }}"
+      type: thin
+      state: present
+      datastore: '{{ vsphere_datastore }}'
+      scsi_controller: 0
+      scsi_type: 'lsilogicsas'
+      unit_number: 1
+    - size_gb: "{{ p_drive_size }}"
+      type: thin
+      state: present
+      datastore: '{{ vsphere_datastore }}'
+      scsi_controller: 0
+      scsi_type: 'lsilogicsas'
+      unit_number: 2
+
+- name: Start the vm
+  vmware_guest:
+    hostname: '{{ vcenter_hostname }}'
+    username: '{{ vcenter_username }}'
+    password: '{{ vcenter_password }}'
+    datacenter: '{{ vsphere_datacenter }}'
+    cluster: '{{ vsphere_cluster }}'
+    validate_certs: 'no'
+    name: '{{ inventory_hostname }}'
+    state: poweredon
+    wait_for_ip_address: yes
+
+- name: copy powershell script to "{{ inventory_hostname }}"
+  vmware_guest_file_operation:
+    hostname: "{{ vcenter_hostname }}"
+    username: "{{ vcenter_username }}"
+    password: "{{ vcenter_password }}"
+    datacenter: "{{ vsphere_datacenter }}"
+    vm_id: "{{ inventory_hostname }}"
+    validate_certs: no
+    vm_username: "{{ guest_username }}"
+    vm_password: "{{ guest_userpassword }}"
+    copy:
+      src: "{{ role_path }}/files/ConfigureRemotingForAnsible.ps1"
+      dest: "C:\\ConfigureRemotingForAnsible.ps1"
+      overwrite: True
+  delegate_to: localhost
+
+- name: Run the Powershell script to generate a new cert and enable 5986 port in firewall
+  vmware_vm_shell:
+    hostname: "{{ vcenter_hostname }}"
+    username: "{{ vcenter_username }}"
+    password: "{{ vcenter_password }}"
+    datacenter: "{{ vsphere_datacenter }}"
+    vm_id: "{{ inventory_hostname }}"
+    validate_certs: no
+    vm_username: "{{ guest_username }}"
+    vm_password: "{{ guest_userpassword }}"
+    vm_shell: 'C:\Windows\System32\WindowsPowershell\v1.0\powershell.exe'
+    vm_shell_args: '-ExecutionPolicy Unrestricted -File C:\ConfigureRemotingForAnsible.ps1'
+    wait_for_process: true
+  delegate_to: localhost

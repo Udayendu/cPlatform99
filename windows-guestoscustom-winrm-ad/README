@@ -1,0 +1,35 @@
+# Changelog
+
+## [v1.0] - 06-12-2020
+
+### Summary
+- Objective of this project to perform the following tasks:
+  - deploy the windows vm from a template
+  - configre the network, dns, ntp
+  - add additional disks and mount in OS level
+  - generate the self signed certs and open WinRM(HTTPS) port 5986
+  - join the system to active directory
+
+### Added
+
+- Ansible Roles
+  - deploy
+  - guest os customization
+  - delete
+
+### Software support
+
+- ansible-2.10
+- pyvmomi-7.0
+
+
+## Deployment Guide:
+
+### To deploy the windows server & do the guest customization, use the below command:
+
+  $ ansible-playbook -i inventory winsrv.yaml --tags "deploy,oscustom"
+
+### To delete the windows server use the below command:
+
+  $ ansible-playbook -i inventory winsrv.yaml --tags "delete"
+

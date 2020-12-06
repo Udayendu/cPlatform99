@@ -1,0 +1,13 @@
+---
+- name: Delete the vm '{{ inventory_hostname }}'
+  vmware_guest:
+    hostname: '{{ vcenter_hostname }}'
+    username: '{{ vcenter_username }}'
+    password: '{{ vcenter_password }}'
+    datacenter: '{{ vsphere_datacenter }}'
+    cluster: '{{ vsphere_cluster }}'
+    validate_certs: 'no'
+    name: '{{ inventory_hostname }}'
+    force: yes
+    state: absent
+  delegate_to: localhost  

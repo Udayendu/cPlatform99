@@ -1,0 +1,72 @@
+- name: Remove all pagefiles from C drive
+  win_pagefile:
+    drive: C
+    remove_all: yes
+    automatic: no
+
+- name: Create new label for C drive
+  win_shell: |
+    Set-Volume -DriveLetter C -NewFileSystemLabel "OS"
+
+- name: Initialize disk D & P
+  win_shell: |
+    Initialize-Disk -Number 1 -PartitionStyle MBR
+    Initialize-Disk -Number 2 -PartitionStyle MBR
+
+- name:  Create a partition with D drive
+  win_partition:
+    drive_letter: D
+    disk_number: "{{ disk_number1 }}"
+    partition_size: "{{ partition_size }}"
+    state: present
+
+- name: Format and create new label for D drive
+  win_format:
+    drive_letter: D
+    file_system: ntfs
+    new_label: "Backup"
+    full: no
+    force: yes
+
+- name: Create a partition with P drive
+  win_partition:
+    drive_letter: P
+    disk_number: "{{ disk_number2 }}"
+    partition_size: "{{ partition_size }}"
+    state: present
+
+- name: Format and create new label for P drive
+  win_format:
+    drive_letter: P
+    file_system: ntfs
+    new_label: "Pagefile"
+    full: no
+    force: yes
+
+- name: Set P pagefile, override if exists
+  win_pagefile:
+    drive: P
+    initial_size: "{{ initial_size }}"
+    maximum_size: "{{ maximum_size }}"
+    state: present
+
+- name: Copy OS hardening file
+  copy:
+    src: "{{ role_path }}/files/os_harden.sh"
+    dest: /tmp/os_harden.sh
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Execute the OS hardening script
+  command: /bin/bash /tmp/os_harden.sh
+
+- name: NTP Client Configuration
+  win_shell: |
+    w32tm /config /manualpeerlist:"{{ ntp_server1 }}, {{ ntp_server2 }}" /syncfromflags:MANUAL
+    Stop-Service w32time
+    Start-Service w32time
+
+- name: Reboot the system
+  win_reboot:
+    reboot_timeout: 600
