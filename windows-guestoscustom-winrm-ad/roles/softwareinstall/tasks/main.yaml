@@ -1,0 +1,13 @@
+- name: Install Chrome
+  win_package:
+    path: 'C:\\SoftwareRepo\ChromeSetup.exe'
+    arguments: /silent  /install                                    
+    state: present                                    
+
+
+- name: Install NotePad++
+  win_package:
+    path: 'C:\\SoftwareRepo\npp.7.9.1.Installer.x64.exe'
+    arguments: /S                                    
+    state: present                                    
+

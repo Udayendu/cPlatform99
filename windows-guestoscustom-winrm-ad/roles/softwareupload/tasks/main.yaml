@@ -1,0 +1,13 @@
+- name: Check the system status
+  win_ping:
+
+- name: Create Software Directory "{{ SOFTWARE_DIRECTORY }}"
+  win_file:
+    path: "{{ SOFTWARE_DIRECTORY }}"
+    state: directory
+
+- name: Upload required packages
+  win_copy:
+    src: "{{ LOCAL_SOURCE_DIRECTORY }}{{ item.value }}"
+    dest: "{{ SOFTWARE_DIRECTORY }}"
+  loop: "{{ MSI_PACKAGES | dict2items}}"

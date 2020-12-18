@@ -8,12 +8,22 @@
   win_shell: |
     Set-Volume -DriveLetter C -NewFileSystemLabel "OS"
 
-- name: Initialize disk D & P
+- name: Change the CD-ROM from D to Z
+  win_shell: |
+    $cd = $NULL
+    $cd = Get-WMIObject -Class Win32_CDROMDrive -ComputerName $env:COMPUTERNAME -ErrorAction Stop
+    if ($cd.Drive -eq "D:")
+    {
+       Write-Output "Changing CD Drive letter from D: to Z:"
+       Set-WmiInstance -InputObject ( Get-WmiObject -Class Win32_volume -Filter "DriveLetter = 'D:'" ) -Arguments @{DriveLetter='z:'}
+    }
+
+- name: Initialize D & P drive
   win_shell: |
     Initialize-Disk -Number 1 -PartitionStyle MBR
     Initialize-Disk -Number 2 -PartitionStyle MBR
 
-- name:  Create a partition with D drive
+- name: Create a partition with D drive
   win_partition:
     drive_letter: D
     disk_number: "{{ disk_number1 }}"
@@ -49,17 +59,6 @@
     initial_size: "{{ initial_size }}"
     maximum_size: "{{ maximum_size }}"
     state: present
-
-- name: Copy OS hardening file
-  copy:
-    src: "{{ role_path }}/files/os_harden.sh"
-    dest: /tmp/os_harden.sh
-    owner: root
-    group: root
-    mode: '0644'
-
-- name: Execute the OS hardening script
-  command: /bin/bash /tmp/os_harden.sh
 
 - name: NTP Client Configuration
   win_shell: |

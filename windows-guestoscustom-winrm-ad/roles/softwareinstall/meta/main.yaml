@@ -1,4 +1,2 @@
 collections:
-  - community.windows
   - ansible.windows
-

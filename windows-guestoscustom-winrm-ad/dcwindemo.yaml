@@ -1,0 +1,74 @@
+## VM Deploy and Guest OS customization
+- hosts: winserv
+  connection: local
+  tags: deploy
+  gather_facts: no
+
+  tasks:
+    - name: Deploy Windows server
+      include_role:
+        name: deploy
+
+
+- hosts: gowinserv
+  connection: winrm
+  tags: guestoscustom
+  gather_facts: no
+
+  tasks:
+    - win_ping:
+
+    - name: Customize Windows Server
+      include_role:
+        name: guestoscustom
+
+
+## Windows OS update
+- hosts: gowinserv
+  connection: winrm
+  tags: winupdates
+  gather_facts: no
+
+  tasks:
+    - win_ping:
+
+    - name: Start the Windows Updates
+      include_role:
+        name: winupdates
+
+
+## VM Delete
+- hosts: winserv
+  connection: local
+  tags: delete
+  gather_facts: no
+
+  tasks:
+    - name: Delete Windows server
+      include_role:
+        name: delete
+
+
+## Software Upload
+- hosts: gowinserv
+  connection: winrm
+  tags: softwareupload
+  gather_facts: no
+
+  tasks:
+    - name: Software Upload to Windows Server
+      include_role:
+        name: softwareupload
+
+
+## Software Install
+- hosts: gowinserv
+  connection: winrm
+  tags: softwareinstall
+  gather_facts: no
+
+  tasks:
+    - name: Software Install in Windows Server
+      include_role:
+        name: softwareinstall
+

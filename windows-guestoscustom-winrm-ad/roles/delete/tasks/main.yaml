@@ -10,4 +10,4 @@
     name: '{{ inventory_hostname }}'
     force: yes
     state: absent
-  delegate_to: localhost  
+  delegate_to: localhost

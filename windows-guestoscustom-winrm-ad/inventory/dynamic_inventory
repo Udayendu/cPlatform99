@@ -1,10 +1,13 @@
-[win-backup]
-<vmname_xxx.xxx.xxx.xxx>
+[winserv]
+<vmname01_xxx.xxx.xxx.xxx>  Mgmt_network_ipv4=''  vsphere_vm_hostname=''
+<vmname02_xxx.xxx.xxx.xxx>  Mgmt_network_ipv4=''  vsphere_vm_hostname=''
 
-[guestos-win-backup]
+
+[gowinserv]
+xxx.xxx.xxx.xxx
 xxx.xxx.xxx.xxx
 
-[guestos-win-backup:vars]
+[gowinserv:vars]
 ansible_connection=winrm
 ansible_user=example\admin
 ansible_password=

@@ -1,0 +1,15 @@
+- name: Install all security, critical, and rollup updates
+  win_updates:
+    category_names:
+      - Updates
+      - SecurityUpdates
+      - CriticalUpdates
+      - UpdateRollups
+    reboot: yes
+    state: installed
+    reboot_timeout: 3600
+  register: result
+
+# Output of installed patches
+- debug: var=result
+
